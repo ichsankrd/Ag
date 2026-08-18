@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ichsankrd - Perencana Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #1E2A30; font-family: 'Work Sans', sans-serif; }
+  #root { min-height: 100vh; }
+  .dn-fallback { color:#9FB0AE; font-family: 'Work Sans', sans-serif; padding: 40px; text-align:center; max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="dn-fallback" id="dn-loading">Memuat aplikasi…</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin onerror="document.getElementById('dn-loading').innerHTML='Gagal memuat React dari CDN. Cek koneksi internet kamu, lalu muat ulang halaman.'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin onerror="document.getElementById('dn-loading').innerHTML='Gagal memuat React DOM dari CDN. Cek koneksi internet kamu, lalu muat ulang halaman.'"></script>
+
+<script>
+if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+  document.getElementById('dn-loading').innerHTML = 'Gagal memuat library React. Cek koneksi internet kamu, lalu muat ulang halaman.';
+} else {
+try {
+const {
+  useState,
+  useEffect
+} = React;
+const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6LxCAjTX9z3C7qT5E2ubXkwrvsxtA5_NuUMZP52sEFECA";
+function getApiKey() {
+  const stored = localStorage.getItem("dn_gemini_api_key");
+  if (stored) return stored;
+  return DEFAULT_GEMINI_API_KEY;
+}
+function setApiKeyStored(key) {
+  localStorage.setItem("dn_gemini_api_key", key || "");
+}
+function makeIcon(paths, viewBox = "0 0 24 24") {
+  return function Icon({
+    size = 24,
+    color = "currentColor",
+    style,
+    ...rest
+  }) {
+    return /*#__PURE__*/React.createElement("svg", {
+      xmlns: "http://www.w3.org/2000/svg",
+      viewBox: viewBox,
+      width: size,
+      height: size,
+      fill: "none",
+      stroke: color,
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      style: style,
+      ...rest
+    }, paths);
+  };
+}
+const Users = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+}), /*#__PURE__*/React.createElement("circle", {
+  cx: "9",
+  cy: "7",
+  r: "4"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M22 21v-2a4 4 0 0 0-3-3.87"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M16 3.13a4 4 0 0 1 0 7.75"
+})));
+const Clock = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+  cx: "12",
+  cy: "12",
+  r: "10"
+}), /*#__PURE__*/React.createElement("polyline", {
+  points: "12 6 12 12 16 14"
+})));
+const ChefHat = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"
+}), /*#__PURE__*/React.createElement("line", {
+  x1: "6",
+  x2: "18",
+  y1: "17",
+  y2: "17"
+})));
+const Sparkles = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M20 3v4"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M22 5h-4"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M4 17v2"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M5 18H3"
+})));
+const Leaf = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"
+})));
+const Flame = makeIcon(/*#__PURE__*/React.createElement("path", {
+  d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+}));
+const Minus = makeIcon(/*#__PURE__*/React.createElement("path", {
+  d: "M5 12h14"
+}));
+const Plus = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M5 12h14"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M12 5v14"
+})));
+const Loader2 = makeIcon(/*#__PURE__*/React.createElement("path", {
+  d: "M21 12a9 9 0 1 1-6.219-8.56"
+}));
+const RefreshCw = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M21 3v5h-5"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M8 16H3v5"
+})));
+const AlertCircle = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+  cx: "12",
+  cy: "12",
+  r: "10"
+}), /*#__PURE__*/React.createElement("line", {
+  x1: "12",
+  x2: "12",
+  y1: "8",
+  y2: "12"
+}), /*#__PURE__*/React.createElement("line", {
+  x1: "12",
+  x2: "12.01",
+  y1: "16",
+  y2: "16"
+})));
+const FileDown = makeIcon(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+  d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M14 2v4a2 2 0 0 0 2 2h4"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M12 18v-6"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "m9 15 3 3 3-3"
+})));
+const C = {
+  bg: "#1E2A30",
+  bgCard: "#F4EEDD",
+  bgCardEdge: "#EAE1C8",
+  ink: "#2B2621",
+  inkSoft: "#6B5F4F",
+  cream: "#F3ECDD",
+  muted: "#9FB0AE",
+  line: "#33454B",
+  danger: "#E0704F"
+};
+const PALETTE = [{
+  a: "#E3A008",
+  d: "#8A5F04"
+}, {
+  a: "#C1440E",
+  d: "#7A2A08"
+}, {
+  a: "#5C7A52",
+  d: "#33472C"
+}, {
+  a: "#7C6FD1",
+  d: "#3C3489"
+}, {
+  a: "#3D8FB0",
+  d: "#1F4E5F"
+}];
+const PLACEHOLDERS = ["Rendang daging sapi, Sayur asem", "Soto ayam", "Ikan bakar bumbu kuning, Lalapan", "Gado-gado", "Ayam betutu, Capcay"];
+
+// dishes: array of nama menu (satu hari bisa lebih dari satu menu)
+// proteinNote: catatan opsional bahan utama yang jumlahnya SUDAH ditentukan user (mis. "Ayam 1kg, 12 potong")
+async function generateRecipes(dishes, orang, proteinNote) {
+  const daftarMenu = dishes.map((d, i) => `${i + 1}. ${d}`).join("\n");
+  const catatanBahan = (proteinNote || "").trim();
+  const prompt = `Buatkan resep masakan Indonesia untuk ${orang} orang, untuk daftar menu berikut yang akan disajikan dalam satu hari yang sama:
+${daftarMenu}
+${catatanBahan ? `\nCatatan bahan utama yang SUDAH TERSEDIA (jangan dihitung ulang dari jumlah orang, pakai jumlah ini apa adanya): ${catatanBahan}. Sesuaikan jumlah bahan pendukung lain (bumbu, sayur, dll) di resep supaya pas dengan jumlah bahan utama ini, bukan sebaliknya. Kalau bahan utama ini dipakai di lebih dari satu menu pada daftar di atas, bagi jumlahnya secara wajar antar menu tersebut.\n` : ""}
+Balas HANYA dengan JSON array valid, tanpa markdown, tanpa teks lain. Array harus berisi PERSIS ${dishes.length} objek, urutannya sama persis dengan daftar menu di atas, masing-masing objek persis format ini:
+{"nama":"nama hidangan","daerah":"asal daerah","deskripsi":"satu kalimat singkat","waktu":"estimasi waktu masak","tingkat":"Mudah atau Sedang atau Sulit","bahan":[{"nama":"nama bahan","jumlah":"takaran dengan satuan dapur Indonesia"}],"langkah":["langkah singkat 1","langkah singkat 2"],"gizi":{"kalori":angka,"protein":angka,"karbo":angka,"lemak":angka}}
+Takaran tiap bahan pada field jumlah harus sudah dihitung pas untuk ${orang} orang, pakai satuan g, ml, sdm, sdt, siung, butir, buah, lembar, batang, atau cm. Field gizi adalah nilai kkal dan gram PER PORSI INDIVIDU, tidak berubah walau jumlah orang berubah. Maksimal 9 bahan dan 6 langkah per menu, tiap langkah satu kalimat singkat.${catatanBahan ? "" : `
+Acuan takaran protein mentah per porsi (pakai sebagai patokan realistis dapur Indonesia, sesuaikan dengan jenis masakannya):
+- Ayam dengan tulang: 150-200 g/porsi; ayam fillet: 100-125 g/porsi
+- Daging sapi untuk masakan berkuah/berbumbu (rendang, semur, gulai): 100-150 g/porsi; sebagai bintang utama (steak, sate): 150-200 g/porsi
+- Ikan: 100-150 g/porsi
+- Udang: 80-120 g/porsi
+- Tahu/tempe sebagai lauk pendamping: 50-75 g/porsi`}`;
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("API key belum diisi. Klik ikon ⚙️ di pojok kanan atas untuk mengisi API key Google Gemini.");
+  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey
+    },
+    body: JSON.stringify({
+      contents: [{
+        role: "user",
+        parts: [{
+          text: prompt
+        }]
+      }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 2000 * dishes.length
+      }
+    })
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    throw new Error(`Gagal menghubungi layanan resep (${response.status}). ${errText.slice(0, 200)}`);
+  }
+  const data = await response.json();
+  if (data.error) {
+    throw new Error(`API error: ${data.error?.message || "Tidak diketahui"}`);
+  }
+  const candidate = (data.candidates || [])[0];
+  if (!candidate) {
+    throw new Error("Respons resep kosong, coba klik ulang.");
+  }
+  const text = (candidate.content?.parts || []).map(p => p.text || "").join("").trim();
+  const clean = text.replace(/```json/g, "").replace(/```/g, "").trim();
+  let parsed;
+  try {
+    parsed = JSON.parse(clean);
+  } catch (e) {
+    throw new Error("Respons resep tidak lengkap/rusak, coba klik ulang.");
+  }
+  return Array.isArray(parsed) ? parsed : [parsed];
+}
+function formatJumlah(jumlah) {
+  if (typeof jumlah !== "string") return jumlah;
+  const matchG = jumlah.match(/^([\d.,]+)\s*g\b(.*)$/i);
+  if (matchG) {
+    const num = parseFloat(matchG[1].replace(",", "."));
+    if (!isNaN(num) && num >= 1000) {
+      const kg = num / 1000;
+      const kgStr = Number.isInteger(kg) ? String(kg) : kg.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      return `${kgStr} Kg${matchG[2] || ""}`;
+    }
+    return jumlah;
+  }
+  const matchMl = jumlah.match(/^([\d.,]+)\s*ml\b(.*)$/i);
+  if (matchMl) {
+    const num = parseFloat(matchMl[1].replace(",", "."));
+    if (!isNaN(num) && num >= 1000) {
+      const l = num / 1000;
+      const lStr = Number.isInteger(l) ? String(l) : l.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      return `${lStr} L${matchMl[2] || ""}`;
+    }
+    return jumlah;
+  }
+  return jumlah;
+}
+function Badge({
+  children
+}) {
+  return /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: "#E7E0CB",
+      color: C.inkSoft,
+      fontSize: 12,
+      fontWeight: 600,
+      padding: "3px 10px",
+      borderRadius: 999,
+      display: "inline-flex",
+      alignItems: "center"
+    }
+  }, children);
+}
+function App() {
+  // Format Date -> "YYYY-MM-DD" pakai komponen tanggal LOKAL (bukan toISOString,
+  // yang mengonversi ke UTC dan bisa menggeser tanggal mundur/maju di zona waktu non-UTC).
+  const toLocalISO = d => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const todayISO = toLocalISO(new Date());
+  const addDaysISO = (iso, n) => {
+    const d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return toLocalISO(d);
+  };
+  const [startDate, setStartDate] = useState(todayISO);
+  const [endDate, setEndDate] = useState(addDaysISO(todayISO, 4));
+  const HARI_PENDEK = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const BULAN_PENDEK = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const diffDays = (a, b) => Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 86400000);
+  const dayCount = Math.max(1, diffDays(startDate, endDate) + 1);
+  const [dishNames, setDishNames] = useState(Array(dayCount).fill(""));
+  const [proteinNotes, setProteinNotes] = useState(Array(dayCount).fill(""));
+  const [orang, setOrang] = useState(2);
+  const [inputVal, setInputVal] = useState("2");
+  const [recipes, setRecipes] = useState(Array(dayCount).fill(null));
+  const [loadingIdx, setLoadingIdx] = useState(Array(dayCount).fill(false));
+  const [errors, setErrors] = useState(Array(dayCount).fill(null));
+  const [dayIdx, setDayIdx] = useState(0);
+  const [everGenerated, setEverGenerated] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const resize = (arr, len, fill) => {
+    if (arr.length === len) return arr;
+    if (arr.length > len) return arr.slice(0, len);
+    return [...arr, ...Array(len - arr.length).fill(fill)];
+  };
+  useEffect(() => {
+    setDishNames(prev => resize(prev, dayCount, ""));
+    setProteinNotes(prev => resize(prev, dayCount, ""));
+    setRecipes(prev => resize(prev, dayCount, null));
+    setLoadingIdx(prev => resize(prev, dayCount, false));
+    setErrors(prev => resize(prev, dayCount, null));
+    if (dayIdx >= dayCount) setDayIdx(dayCount - 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dayCount]);
+  const handleStartChange = val => {
+    setStartDate(val);
+    if (diffDays(val, endDate) < 0) {
+      setEndDate(val);
+    }
+  };
+  const handleEndChange = val => {
+    if (diffDays(startDate, val) < 0) {
+      setEndDate(startDate);
+      return;
+    }
+    setEndDate(val);
+  };
+  const getDateForIdx = i => {
+    const base = startDate ? new Date(startDate + "T00:00:00") : new Date();
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    return d;
+  };
+  const formatDateShort = d => `${HARI_PENDEK[d.getDay()]}, ${d.getDate()} ${BULAN_PENDEK[d.getMonth()]}`;
+  const rangeLabel = (() => {
+    const first = getDateForIdx(0);
+    const last = getDateForIdx(dayCount - 1);
+    const sameMonth = first.getMonth() === last.getMonth() && first.getFullYear() === last.getFullYear();
+    if (sameMonth) {
+      return `${first.getDate()}–${last.getDate()} ${BULAN_PENDEK[last.getMonth()]} ${last.getFullYear()}`;
+    }
+    return `${first.getDate()} ${BULAN_PENDEK[first.getMonth()]} – ${last.getDate()} ${BULAN_PENDEK[last.getMonth()]} ${last.getFullYear()}`;
+  })();
+  const clamp = n => Math.min(2500, Math.max(1, n));
+  const commitOrang = raw => {
+    const n = parseInt(raw, 10);
+    if (isNaN(n) || n < 1) {
+      setOrang(1);
+      setInputVal("1");
+      return;
+    }
+    const c = clamp(n);
+    setOrang(c);
+    setInputVal(String(c));
+  };
+  const step = delta => {
+    const next = clamp(orang + delta);
+    setOrang(next);
+    setInputVal(String(next));
+  };
+  const setLoadingAt = (i, v) => setLoadingIdx(prev => prev.map((x, idx) => idx === i ? v : x));
+  const setErrorAt = (i, v) => setErrors(prev => prev.map((x, idx) => idx === i ? v : x));
+  const setRecipeAt = (i, v) => setRecipes(prev => prev.map((x, idx) => idx === i ? v : x));
+  const parseDishes = raw => raw.split(",").map(s => s.trim()).filter(Boolean);
+  const runOne = async (i, currentOrang) => {
+    const dishes = parseDishes(dishNames[i]);
+    if (dishes.length === 0) {
+      setErrorAt(i, "Isi dulu nama menunya.");
+      return;
+    }
+    setErrorAt(i, null);
+    setLoadingAt(i, true);
+    try {
+      const arr = await generateRecipes(dishes, currentOrang, proteinNotes[i]);
+      setRecipeAt(i, arr);
+    } catch (e) {
+      setErrorAt(i, e && e.message ? e.message : "Gagal membuat resep. Coba lagi.");
+    } finally {
+      setLoadingAt(i, false);
+    }
+  };
+  const runOneDish = async (i, j, currentOrang) => {
+    const current = recipes[i];
+    const dishName = current?.[j]?.nama || parseDishes(dishNames[i])[j];
+    if (!dishName) return;
+    setErrorAt(i, null);
+    setLoadingAt(i, true);
+    try {
+      const arr = await generateRecipes([dishName], currentOrang, proteinNotes[i]);
+      const updated = current ? [...current] : [];
+      updated[j] = arr[0];
+      setRecipeAt(i, updated);
+    } catch (e) {
+      setErrorAt(i, e && e.message ? e.message : "Gagal membuat resep. Coba lagi.");
+    } finally {
+      setLoadingAt(i, false);
+    }
+  };
+  const runAll = async () => {
+    setEverGenerated(true);
+    for (let i = 0; i < dayCount; i++) {
+      if (dishNames[i].trim()) {
+        await runOne(i, orang);
+      } else {
+        setErrorAt(i, "Isi dulu nama menunya.");
+      }
+    }
+  };
+  const exportPDF = () => {
+    setShowPreview(true);
+  };
+  const anyLoading = loadingIdx.some(Boolean);
+  const anyFilled = dishNames.some(d => d.trim());
+  const anyRecipes = recipes.some(r => r && r.length > 0);
+  const idxWithRecipes = Array.from({
+    length: dayCount
+  }, (_, i) => i).filter(i => recipes[i] && recipes[i].length > 0);
+  const printDaysContent = idxWithRecipes.map((i, sectionIdx) => {
+    const dishes = recipes[i];
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        pageBreakAfter: sectionIdx < idxWithRecipes.length - 1 ? "always" : "auto"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        borderBottom: "2px solid #E3A008",
+        paddingBottom: 8,
+        marginBottom: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 11,
+        color: "#6B5F4F",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em"
+      }
+    }, formatDateShort(getDateForIdx(i))), /*#__PURE__*/React.createElement("h2", {
+      style: {
+        fontFamily: "'Fraunces', serif",
+        fontSize: 19,
+        margin: "4px 0 0"
+      }
+    }, dishes.map(d => d.nama).join(" & "))), dishes.map((dish, j) => /*#__PURE__*/React.createElement("div", {
+      key: j,
+      style: {
+        marginBottom: 18,
+        border: "1px solid #EAE1C8",
+        borderRadius: 10,
+        padding: "14px 18px",
+        breakInside: "avoid"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10.5,
+        color: "#8A5F04",
+        textTransform: "uppercase",
+        letterSpacing: "0.05em",
+        marginBottom: 4,
+        fontWeight: 700
+      }
+    }, (dish.daerah || "").toUpperCase()), /*#__PURE__*/React.createElement("h3", {
+      style: {
+        fontFamily: "'Fraunces', serif",
+        fontSize: 16,
+        margin: "0 0 4px"
+      }
+    }, dish.nama), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#6B5F4F",
+        marginBottom: 10
+      }
+    }, dish.deskripsi), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 6,
+        flexWrap: "wrap",
+        marginBottom: 12
+      }
+    }, [dish.waktu, dish.tingkat, `${orang} orang`].map((t, k) => /*#__PURE__*/React.createElement("span", {
+      key: k,
+      style: {
+        background: "#F4EEDD",
+        border: "1px solid #EAE1C8",
+        fontSize: 10.5,
+        padding: "2px 8px",
+        borderRadius: 999,
+        color: "#6B5F4F"
+      }
+    }, t))), /*#__PURE__*/React.createElement("table", {
+      style: {
+        width: "100%",
+        borderCollapse: "collapse",
+        marginBottom: 12,
+        fontSize: 12
+      }
+    }, /*#__PURE__*/React.createElement("tbody", null, (dish.bahan || []).map((b, k) => /*#__PURE__*/React.createElement("tr", {
+      key: k
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: "4px 0",
+        borderBottom: "1px solid #EAE1C8"
+      }
+    }, b.nama), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: "4px 0",
+        borderBottom: "1px solid #EAE1C8",
+        textAlign: "right",
+        fontFamily: "'JetBrains Mono', monospace",
+        color: "#8A5F04",
+        whiteSpace: "nowrap",
+        paddingLeft: 12
+      }
+    }, formatJumlah(b.jumlah)))))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'Fraunces', serif",
+        fontSize: 13,
+        fontWeight: 600,
+        marginBottom: 6
+      }
+    }, "Cara membuat"), /*#__PURE__*/React.createElement("ol", {
+      style: {
+        margin: 0,
+        paddingLeft: 18,
+        fontSize: 12,
+        lineHeight: 1.55
+      }
+    }, (dish.langkah || []).map((s, k) => /*#__PURE__*/React.createElement("li", {
+      key: k,
+      style: {
+        marginBottom: 5
+      }
+    }, s))), dish.gizi && /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 18,
+        marginTop: 10,
+        paddingTop: 10,
+        borderTop: "1px solid #EAE1C8"
+      }
+    }, [["Kalori", `${dish.gizi.kalori} kkal`], ["Protein", `${dish.gizi.protein} g`], ["Karbo", `${dish.gizi.karbo} g`], ["Lemak", `${dish.gizi.lemak} g`]].map(([label, val]) => /*#__PURE__*/React.createElement("div", {
+      key: label
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: "block",
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 9.5,
+        color: "#6B5F4F",
+        textTransform: "uppercase"
+      }
+    }, label), /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: "block",
+        fontWeight: 600,
+        fontSize: 13
+      }
+    }, val)))))));
+  });
+  const printHeader = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: "'Fraunces', serif",
+      fontSize: 24,
+      margin: "0 0 4px"
+    }
+  }, "Ichsankrd"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#6B5F4F",
+      fontSize: 12,
+      marginBottom: 22
+    }
+  }, "Menu ", idxWithRecipes.length, " hari · ", rangeLabel, " · ", orang, " orang per hari"));
+  const day = recipes[dayIdx]; // array resep untuk dayIdx (bisa lebih dari satu menu), atau null
+  const pal = PALETTE[dayIdx % PALETTE.length];
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "app-shell",
+    style: {
+      minHeight: "100vh",
+      background: C.bg,
+      fontFamily: "'Work Sans', 'Segoe UI', sans-serif",
+      color: C.cream,
+      padding: "32px 16px 64px"
+    }
+  }, /*#__PURE__*/React.createElement("style", null, `
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        * { box-sizing: border-box; }
+        .fraunces { font-family: 'Fraunces', serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .fade-in { animation: fadeIn 0.35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .bahan-row { animation: rise 0.25s ease backwards; }
+        @keyframes rise { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
+        .spin { animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .stepper-btn { cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+        .stepper-btn:hover { background: #2A3A41; }
+        .orang-input::-webkit-outer-spin-button, .orang-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .day-tab { transition: transform 0.15s ease, background 0.2s ease; cursor: pointer; }
+        .day-tab:hover { transform: translateY(-2px); }
+        .dish-input::placeholder { color: #5D6E72; }
+        .main-btn { cursor: pointer; border: none; transition: opacity 0.15s ease, transform 0.1s ease; }
+        .main-btn:active { transform: scale(0.98); }
+        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        ::-webkit-scrollbar { height: 6px; }
+        ::-webkit-scrollbar-thumb { background: ${C.line}; border-radius: 3px; }
+        .print-sheet { display: none; }
+        @media print {
+          .app-shell { display: none !important; }
+          .no-print { display: none !important; }
+          .print-sheet { display: block !important; }
+        }
+      `), /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 760,
+      margin: "0 auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 28,
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 6
+    }
+  }, /*#__PURE__*/React.createElement(ChefHat, {
+    size: 22,
+    color: "#E3A008"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      fontSize: 12,
+      color: C.muted,
+      letterSpacing: "0.12em"
+    }
+  }, "PERENCANA MENU")), /*#__PURE__*/React.createElement("h1", {
+    className: "fraunces",
+    style: {
+      fontSize: 34,
+      fontWeight: 600,
+      margin: 0,
+      lineHeight: 1.15
+    }
+  }, "Ichsankrd"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: C.muted,
+      fontSize: 15,
+      marginTop: 8,
+      maxWidth: 540
+    }
+  }, "Kamu tentukan menunya untuk 5 hari, jumlah orangnya berapa. Resepnya aku siapkan otomatis, takarannya Insyaallah pas Un.")), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    title: "Atur API Key Google Gemini",
+    onClick: () => {
+      const current = getApiKey();
+      const next = window.prompt("Masukkan Google Gemini API key kamu (dimulai dengan AIza...).\n\nDapatkan gratis di aistudio.google.com/apikey.\n\nKey ini disimpan HANYA di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain generativelanguage.googleapis.com.", current);
+      if (next !== null) setApiKeyStored(next.trim());
+    },
+    style: {
+      flexShrink: 0,
+      width: 34,
+      height: 34,
+      borderRadius: 9,
+      background: "#233038",
+      border: `1px solid ${C.line}`,
+      color: C.muted,
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, "⚙️")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#16202699",
+      border: `1px solid ${C.line}`,
+      borderRadius: 14,
+      padding: 16,
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 10,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: C.muted
+    }
+  }, "Menu ", dayCount, " hari"), /*#__PURE__*/React.createElement("div", {
+    className: "mono",
+    style: {
+      fontSize: 12,
+      color: "#E3A008",
+      marginTop: 2
+    }
+  }, rangeLabel), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11.5,
+      color: C.muted,
+      marginTop: 4
+    }
+  }, "Lebih dari satu menu sehari? Pisahkan dengan koma, mis. \"Ayam merah, Capcay\". Sudah punya bahan utamanya? Isi di kolom putus-putus di bawah nama menu, resepnya akan menyesuaikan.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: C.muted
+    }
+  }, "Mulai"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: startDate,
+    onChange: e => handleStartChange(e.target.value),
+    style: {
+      height: 32,
+      background: "#0F181C",
+      border: `1px solid ${C.line}`,
+      borderRadius: 9,
+      color: C.cream,
+      fontSize: 13,
+      padding: "0 8px"
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: C.muted
+    }
+  }, "Selesai"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: endDate,
+    min: startDate,
+    onChange: e => handleEndChange(e.target.value),
+    style: {
+      height: 32,
+      background: "#0F181C",
+      border: `1px solid ${C.line}`,
+      borderRadius: 9,
+      color: C.cream,
+      fontSize: 13,
+      padding: "0 8px"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gap: 10
+    }
+  }, Array.from({
+    length: dayCount
+  }, (_, i) => i).map(i => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      display: "flex",
+      alignItems: "flex-start",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      width: 26,
+      height: 26,
+      flexShrink: 0,
+      marginTop: 6,
+      borderRadius: 8,
+      background: "#233038",
+      color: PALETTE[i % PALETTE.length].a,
+      fontSize: 11,
+      fontWeight: 700,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, i + 1), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      gap: 5
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "dish-input",
+    type: "text",
+    value: dishNames[i],
+    placeholder: PLACEHOLDERS[i % PLACEHOLDERS.length],
+    onChange: e => {
+      const next = [...dishNames];
+      next[i] = e.target.value;
+      setDishNames(next);
+    },
+    style: {
+      height: 38,
+      background: "#0F181C",
+      border: `1px solid ${C.line}`,
+      borderRadius: 9,
+      color: C.cream,
+      fontSize: 14,
+      padding: "0 12px"
+    }
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "dish-input",
+    type: "text",
+    value: proteinNotes[i],
+    placeholder: "Mau pakai Ayam/Daging berapa Kg?",
+    onChange: e => {
+      const next = [...proteinNotes];
+      next[i] = e.target.value;
+      setProteinNotes(next);
+    },
+    style: {
+      height: 32,
+      background: "transparent",
+      border: `1px dashed ${C.line}`,
+      borderRadius: 9,
+      color: C.muted,
+      fontSize: 12.5,
+      padding: "0 12px"
+    }
+  })))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#16202699",
+      border: `1px solid ${C.line}`,
+      borderRadius: 14,
+      padding: 16,
+      marginBottom: 24
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 16,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement(Users, {
+    size: 17,
+    color: "#E3A008"
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 14,
+      fontWeight: 600
+    }
+  }, "Jumlah orang"), /*#__PURE__*/React.createElement("button", {
+    className: "stepper-btn",
+    onClick: () => step(-1),
+    "aria-label": "Kurangi jumlah orang",
+    style: {
+      width: 32,
+      height: 32,
+      borderRadius: 9,
+      background: "#233038",
+      color: C.cream,
+      marginLeft: 6
+    }
+  }, /*#__PURE__*/React.createElement(Minus, {
+    size: 14
+  })), /*#__PURE__*/React.createElement("input", {
+    className: "mono orang-input",
+    type: "number",
+    min: 1,
+    max: 2500,
+    value: inputVal,
+    onChange: e => setInputVal(e.target.value),
+    onBlur: e => commitOrang(e.target.value),
+    onKeyDown: e => {
+      if (e.key === "Enter") commitOrang(e.target.value);
+    },
+    style: {
+      width: 66,
+      height: 32,
+      textAlign: "center",
+      fontSize: 15,
+      fontWeight: 600,
+      background: "#0F181C",
+      border: `1px solid ${C.line}`,
+      borderRadius: 9,
+      color: C.cream
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "stepper-btn",
+    onClick: () => step(1),
+    "aria-label": "Tambah jumlah orang",
+    style: {
+      width: 32,
+      height: 32,
+      borderRadius: 9,
+      background: "#233038",
+      color: C.cream
+    }
+  }, /*#__PURE__*/React.createElement(Plus, {
+    size: 14
+  }))), /*#__PURE__*/React.createElement("button", {
+    className: "main-btn",
+    onClick: runAll,
+    disabled: anyLoading || !anyFilled,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      background: "#E3A008",
+      color: "#3A2600",
+      fontSize: 14,
+      fontWeight: 700,
+      padding: "10px 18px",
+      borderRadius: 10
+    }
+  }, anyLoading ? /*#__PURE__*/React.createElement(Loader2, {
+    size: 16,
+    className: "spin"
+  }) : /*#__PURE__*/React.createElement(Sparkles, {
+    size: 16
+  }), everGenerated ? "Perbarui resep 5 hari" : "Buat resep 5 hari")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "main-btn",
+    onClick: exportPDF,
+    disabled: !anyRecipes,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      background: "transparent",
+      border: `1px solid ${C.line}`,
+      color: C.cream,
+      fontSize: 13,
+      fontWeight: 600,
+      padding: "9px 16px",
+      borderRadius: 10
+    }
+  }, /*#__PURE__*/React.createElement(FileDown, {
+    size: 15
+  }), " Ekspor PDF (gabung semua hari)"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      overflowX: "auto",
+      paddingBottom: 6,
+      marginBottom: 24
+    }
+  }, Array.from({
+    length: dayCount
+  }, (_, i) => i).map(i => {
+    const active = i === dayIdx;
+    const p = PALETTE[i % PALETTE.length];
+    return /*#__PURE__*/React.createElement("button", {
+      key: i,
+      className: "day-tab",
+      onClick: () => setDayIdx(i),
+      style: {
+        flex: "0 0 auto",
+        minWidth: 132,
+        textAlign: "left",
+        border: `1px solid ${active ? p.a : C.line}`,
+        background: active ? "#16202699" : "transparent",
+        borderRadius: 12,
+        padding: "10px 12px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 8,
+        height: 8,
+        borderRadius: "50%",
+        background: p.a,
+        display: "inline-block"
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "mono",
+      style: {
+        fontSize: 11,
+        color: C.muted
+      }
+    }, formatDateShort(getDateForIdx(i)))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 600,
+        color: C.cream,
+        lineHeight: 1.3
+      }
+    }, loadingIdx[i] ? "Menyiapkan..." : (recipes[i] && recipes[i].length ? recipes[i].map(r => r.nama).join(" & ") : dishNames[i]) || "Belum diisi"));
+  })), loadingIdx[dayIdx] && /*#__PURE__*/React.createElement("div", {
+    className: "fade-in",
+    style: {
+      background: C.bgCard,
+      borderRadius: 16,
+      padding: "60px 24px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 14,
+      color: C.ink
+    }
+  }, /*#__PURE__*/React.createElement(Loader2, {
+    size: 26,
+    className: "spin",
+    color: pal.a
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 14,
+      color: C.inkSoft
+    }
+  }, "Meracik resep ", dishNames[dayIdx] || "", " untuk ", orang, " orang...")), !loadingIdx[dayIdx] && errors[dayIdx] && /*#__PURE__*/React.createElement("div", {
+    className: "fade-in",
+    style: {
+      background: C.bgCard,
+      borderRadius: 16,
+      padding: "40px 24px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 12,
+      color: C.ink
+    }
+  }, /*#__PURE__*/React.createElement(AlertCircle, {
+    size: 22,
+    color: C.danger
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 14,
+      color: C.inkSoft,
+      textAlign: "center"
+    }
+  }, errors[dayIdx]), /*#__PURE__*/React.createElement("button", {
+    className: "main-btn",
+    onClick: () => runOne(dayIdx, orang),
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      background: "#233038",
+      color: C.cream,
+      fontSize: 13,
+      fontWeight: 600,
+      padding: "8px 14px",
+      borderRadius: 9
+    }
+  }, /*#__PURE__*/React.createElement(RefreshCw, {
+    size: 14
+  }), " Coba lagi")), !loadingIdx[dayIdx] && !errors[dayIdx] && (!day || day.length === 0) && /*#__PURE__*/React.createElement("div", {
+    className: "fade-in",
+    style: {
+      background: C.bgCard,
+      borderRadius: 16,
+      padding: "50px 24px",
+      textAlign: "center",
+      color: C.inkSoft,
+      fontSize: 14
+    }
+  }, "Isi nama menu hari ", dayIdx + 1, " dan tekan \"Buat resep 5 hari\" untuk melihat resepnya di sini."), !loadingIdx[dayIdx] && !errors[dayIdx] && day && day.length > 0 && /*#__PURE__*/React.createElement("div", {
+    key: dayIdx + "-" + orang,
+    className: "fade-in",
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "0 4px"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      fontSize: 12,
+      color: C.muted
+    }
+  }, formatDateShort(getDateForIdx(dayIdx)), " · ", day.length, " menu"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => runOne(dayIdx, orang),
+    "aria-label": "Buat ulang semua resep hari ini",
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      background: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: C.cream,
+      fontSize: 12,
+      fontWeight: 600
+    }
+  }, /*#__PURE__*/React.createElement(RefreshCw, {
+    size: 14
+  }), " Buat ulang semua")), day.map((dish, j) => /*#__PURE__*/React.createElement("div", {
+    key: j,
+    style: {
+      background: C.bgCard,
+      borderRadius: 16,
+      overflow: "hidden",
+      color: C.ink
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: pal.a,
+      padding: "18px 24px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      color: pal.d,
+      marginBottom: 4,
+      letterSpacing: "0.04em"
+    }
+  }, day.length > 1 ? `MENU ${j + 1} · ` : "", (dish.daerah || "").toUpperCase()), /*#__PURE__*/React.createElement("h2", {
+    className: "fraunces",
+    style: {
+      fontSize: 26,
+      fontWeight: 600,
+      margin: 0,
+      color: pal.d
+    }
+  }, dish.nama)), /*#__PURE__*/React.createElement("button", {
+    onClick: () => runOneDish(dayIdx, j, orang),
+    "aria-label": `Buat ulang resep ${dish.nama}`,
+    style: {
+      background: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: pal.d,
+      flexShrink: 0,
+      marginTop: 4
+    }
+  }, /*#__PURE__*/React.createElement(RefreshCw, {
+    size: 18
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "22px 24px 26px"
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 14.5,
+      color: C.inkSoft,
+      lineHeight: 1.6,
+      marginTop: 0,
+      marginBottom: 16
+    }
+  }, dish.deskripsi), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      flexWrap: "wrap",
+      marginBottom: 20
+    }
+  }, /*#__PURE__*/React.createElement(Badge, null, /*#__PURE__*/React.createElement(Clock, {
+    size: 11,
+    style: {
+      marginRight: 4
+    }
+  }), dish.waktu), /*#__PURE__*/React.createElement(Badge, null, dish.tingkat), /*#__PURE__*/React.createElement(Badge, null, /*#__PURE__*/React.createElement(Users, {
+    size: 11,
+    style: {
+      marginRight: 4
+    }
+  }), orang, " orang")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 22
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement(Leaf, {
+    size: 15,
+    color: pal.d
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "fraunces",
+    style: {
+      fontSize: 16,
+      fontWeight: 600,
+      margin: 0
+    }
+  }, "Bahan-bahan")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderTop: `1px solid ${C.bgCardEdge}`
+    }
+  }, (dish.bahan || []).map((b, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "bahan-row",
+    style: {
+      animationDelay: `${i * 0.02}s`,
+      display: "flex",
+      justifyContent: "space-between",
+      gap: 12,
+      padding: "9px 0",
+      borderBottom: `1px solid ${C.bgCardEdge}`,
+      fontSize: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.ink
+    }
+  }, b.nama), /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      color: pal.d,
+      fontWeight: 500,
+      whiteSpace: "nowrap"
+    }
+  }, formatJumlah(b.jumlah)))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement(Flame, {
+    size: 15,
+    color: pal.d
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "fraunces",
+    style: {
+      fontSize: 16,
+      fontWeight: 600,
+      margin: 0
+    }
+  }, "Cara membuat")), /*#__PURE__*/React.createElement("ol", {
+    style: {
+      margin: 0,
+      paddingLeft: 0,
+      listStyle: "none"
+    }
+  }, (dish.langkah || []).map((s, i) => /*#__PURE__*/React.createElement("li", {
+    key: i,
+    style: {
+      display: "flex",
+      gap: 12,
+      marginBottom: 12,
+      fontSize: 14,
+      lineHeight: 1.6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      flexShrink: 0,
+      width: 22,
+      height: 22,
+      borderRadius: "50%",
+      background: pal.a,
+      color: pal.d,
+      fontSize: 11,
+      fontWeight: 700,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, i + 1), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.ink
+    }
+  }, s))))), dish.gizi && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4, 1fr)",
+      gap: 10,
+      marginTop: 20,
+      paddingTop: 18,
+      borderTop: `1px solid ${C.bgCardEdge}`
+    }
+  }, [["Kalori", `${dish.gizi.kalori} kkal`], ["Protein", `${dish.gizi.protein} g`], ["Karbo", `${dish.gizi.karbo} g`], ["Lemak", `${dish.gizi.lemak} g`]].map(([label, val]) => /*#__PURE__*/React.createElement("div", {
+    key: label
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mono",
+    style: {
+      fontSize: 11,
+      color: C.inkSoft,
+      marginBottom: 2
+    }
+  }, label.toUpperCase()), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 15,
+      fontWeight: 600
+    }
+  }, val)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: C.inkSoft,
+      marginTop: 8
+    }
+  }, "per porsi individu · dibuat otomatis, cek ulang rasa sesuai selera"))))), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 12,
+      color: C.muted,
+      textAlign: "center",
+      marginTop: 24
+    }
+  }, "Pisahkan dengan koma untuk lebih dari satu menu sehari. Pakai ikon refresh di tiap kartu untuk buat ulang satu menu saja, atau \"Buat ulang semua\" untuk satu hari penuh."))), showPreview && /*#__PURE__*/React.createElement("div", {
+    className: "no-print",
+    style: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(15, 24, 28, 0.72)",
+      zIndex: 1000,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: "24px 16px",
+      overflowY: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "sticky",
+      top: 0,
+      width: "100%",
+      maxWidth: 780,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 14,
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.cream,
+      fontSize: 13,
+      fontWeight: 600
+    }
+  }, "Pratinjau PDF · ", idxWithRecipes.length, " hari"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowPreview(false),
+    style: {
+      background: "transparent",
+      border: `1px solid ${C.line}`,
+      color: C.cream,
+      fontSize: 13,
+      fontWeight: 600,
+      padding: "8px 14px",
+      borderRadius: 9,
+      cursor: "pointer"
+    }
+  }, "Tutup"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => window.print(),
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      background: "#E3A008",
+      color: "#3A2600",
+      fontSize: 13,
+      fontWeight: 700,
+      padding: "8px 16px",
+      borderRadius: 9,
+      border: "none",
+      cursor: "pointer"
+    }
+  }, /*#__PURE__*/React.createElement(FileDown, {
+    size: 15
+  }), " Cetak / Simpan PDF"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: C.bgCard,
+      color: "#2B2621",
+      width: "100%",
+      maxWidth: 780,
+      borderRadius: 10,
+      padding: "24px 28px 32px",
+      fontFamily: "'Work Sans', 'Segoe UI', sans-serif"
+    }
+  }, printHeader, printDaysContent)), /*#__PURE__*/React.createElement("div", {
+    className: "print-sheet",
+    style: {
+      fontFamily: "'Work Sans', 'Segoe UI', sans-serif",
+      color: "#2B2621",
+      padding: "8mm 4mm"
+    }
+  }, printHeader, printDaysContent));
+}
+const rootEl = document.getElementById("root");
+const root = ReactDOM.createRoot(rootEl);
+root.render(/*#__PURE__*/React.createElement(App, null));} catch (e) {
+  document.getElementById('root').innerHTML = '<div class="dn-fallback">Terjadi kesalahan saat memuat aplikasi: ' + (e && e.message ? e.message : e) + '</div>';
+  console.error(e);
+}
+}
+</script>
+</body>
+</html>
