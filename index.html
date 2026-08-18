@@ -726,7 +726,7 @@ function App() {
     title: "Atur API Key Groq",
     onClick: () => {
       const current = getApiKey();
-      const next = window.prompt("Masukkan Groq API key kamu (dimulai dengan gsk_...).\n\nDapatkan gratis di console.groq.com/keys.\n\nKey ini disimpan HANYA di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain api.groq.com.", current);
+      const next = window.prompt("Hubungi Pemilik ya\n\Ichsan.\n\nKey ini disimpan HANYA di browser(localStorage),.", current);
       if (next !== null) setApiKeyStored(next.trim());
     },
     style: {
